@@ -1,0 +1,16 @@
+Most of the program is already implemented:
+
+- Boilerplate for Hibernate session generation
+- Menus and navigation
+- Bean classes
+- Hibernate mappings for Immobilie, Makler and Person classes
+
+Still to do:
+
+- Hibernate mappings for remaining Bean classes:
+  - Haus
+  - Wohnung
+  - Vertrag
+    - Kaufvertrag
+    - Mietvertrag
+- Logic in ImmoService class. I think all of the necessary methods are there, but they're all handled using in-memory Sets defined in the ImmoService class. So we need to get rid of this Set-oriented logic and replace it with equivalent code for the Hibernate classes. (This is basically what the TODO comment at the top of the ImmoService says.)
