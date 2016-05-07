@@ -23,6 +23,14 @@ import de.dis2013.data.Wohnung;
  * TODO: Aktuell werden alle Daten im Speicher gehalten. Ziel der Übung
  * ist es, schrittweise die Datenverwaltung in die Datenbank auszulagern.
  * Wenn die Arbeit erledigt ist, werden alle Sets dieser Klasse überflüssig.
+ * 
+ * Translation:
+ * 
+ * "Class for management of all database entities.
+ * 
+ * Currently all data is held in memory. The goal of the exercise is,
+ * step-by-step, to move the data management into the database. When the
+ * exercise is completed, all Sets in this class will be superfluous."
  */
 public class ImmoService {
 	//Datensätze im Speicher
