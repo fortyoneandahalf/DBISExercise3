@@ -14,10 +14,29 @@
 		<property name="flaeche" type="integer" column="flaeche" />
 		<many-to-one name="verwalter" class="de.dis2013.data.Makler" column="verwalter" not-null="true" />
 		
-		<union-subclass name="de.dis2013.data.Haus" table="haeuser">
+		<joined-subclass name="de.dis2013.data.Haus" table="haeuser">
+			<key column=id/>
 			<property name="stockwerke" type="integer" column="stockwerke" />
 			<property name="kaufpreis" type="integer" column="kaufpreis" />
 			<property name="garten" type="boolean" column="garten" />
-		</union-subclass>
+		</joined-subclass>
+		
+		<joined-subclass name="de.dis2013.data.Wohnung" table="wohnung">
+			<property name="stockwerk" type="int">
+	            <column name="STOCKWERK" />
+	        </property>
+	        <property name="mietpreis" type="int">
+	            <column name="MIETPREIS" />
+	        </property>
+	        <property name="zimmer" type="int">
+	            <column name="ZIMMER" />
+	        </property>
+	        <property name="balkon" type="boolean">
+	            <column name="BALKON" />
+	        </property>
+	        <property name="ebk" type="boolean">
+	            <column name="EBK" />
+	        </property>
+	    </joined-subclass>
 	</class>
 </hibernate-mapping>

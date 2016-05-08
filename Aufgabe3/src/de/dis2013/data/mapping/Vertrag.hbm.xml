@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated 07-May-2016 16:53:26 by Hibernate Tools 3.4.0.CR1 -->
+<hibernate-mapping>
+    <class name="de.dis2013.data.Vertrag" table="VERTRAG" abstract="true">
+        <id name="id" type="int">
+            <column name="ID" />
+            <generator class="assigned" />
+        </id>
+        <discriminator type="string">
+            <column name="DISCR_COL" />
+        </discriminator>
+        <property name="vertragsnummer" type="int">
+            <column name="VERTRAGSNUMMER" />
+        </property>
+        <property name="datum" type="java.util.Date">
+            <column name="DATUM" />
+        </property>
+        <property name="ort" type="java.lang.String">
+            <column name="ORT" />
+        </property>
+        <many-to-one name="vertragspartner" class="de.dis2013.data.Person" fetch="join">
+            <column name="VERTRAGSPARTNER" />
+        </many-to-one>
+        
+        <joined-subclass name="de.dis2013.data.Mietvertrag" table="mietvertrag">
+			<key column=ID/>
+			<property name="mietbeginn" type="java.util.Date">
+	            <column name="MIETBEGINN" />
+	        </property>
+	        <property name="dauer" type="int">
+	            <column name="DAUER" />
+	        </property>
+	        <property name="nebenkosten" type="int">
+	            <column name="NEBENKOSTEN" />
+	        </property>
+	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" fetch="join">
+	            <column name="WOHNUNG" />
+	        </many-to-one>
+		</joined-subclass>
+		
+		<joined-subclass name="de.dis2013.data.Kauftvertrag" table="kaufvertrag">
+			<key column=ID/>
+			<property name="anzahlRaten" type="int">
+	            <column name="ANZAHLRATEN" />
+	        </property>
+	        <property name="ratenzins" type="int">
+	            <column name="RATENZINS" />
+	        </property>
+	        <many-to-one name="haus" class="de.dis2013.data.Haus" fetch="join">
+	            <column name="HAUS" />
+	        </many-to-one>
+		</joined-subclass>
+    </class>
+</hibernate-mapping>
