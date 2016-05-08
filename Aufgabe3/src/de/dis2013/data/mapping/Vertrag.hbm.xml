@@ -25,7 +25,7 @@
         </many-to-one>
         
         <joined-subclass name="de.dis2013.data.Mietvertrag" table="mietvertrag">
-			<key column=ID/>
+			<key column="ID"/>
 			<property name="mietbeginn" type="java.util.Date">
 	            <column name="MIETBEGINN" />
 	        </property>
@@ -41,7 +41,7 @@
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Kauftvertrag" table="kaufvertrag">
-			<key column=ID/>
+			<key column="ID"/>
 			<property name="anzahlRaten" type="int">
 	            <column name="ANZAHLRATEN" />
 	        </property>
