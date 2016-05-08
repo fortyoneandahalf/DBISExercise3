@@ -15,13 +15,14 @@
 		<many-to-one name="verwalter" class="de.dis2013.data.Makler" column="verwalter" not-null="true" />
 		
 		<joined-subclass name="de.dis2013.data.Haus" table="haeuser">
-			<key column=id/>
+			<key column="id"/>
 			<property name="stockwerke" type="integer" column="stockwerke" />
 			<property name="kaufpreis" type="integer" column="kaufpreis" />
 			<property name="garten" type="boolean" column="garten" />
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Wohnung" table="wohnung">
+			<key column="id"/>
 			<property name="stockwerk" type="int">
 	            <column name="STOCKWERK" />
 	        </property>
