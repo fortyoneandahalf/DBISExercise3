@@ -54,16 +54,23 @@ public class ImmoService {
 	 * @return Makler mit der ID oder null
 	 */
 	public Makler getMaklerById(int id) {
-		Iterator<Makler> it = makler.iterator();
+		Session session = sessionFactory.openSession();
+//		session.beginTransaction();
 		
-		while(it.hasNext()) {
-			Makler m = it.next();
-			
-			if(m.getId() == id)
-				return m;
-		}
+		Makler makler = (Makler) session.get(Makler.class, id);
+		// session.save(makler);
+		session.close();
 		
-		return null;
+		//Iterator<Makler> it = makler.iterator();
+//		
+//		while(it.hasNext()) {
+//			Makler m = it.next();
+//			
+//			if(m.getId() == id)
+//				return m;
+//		}
+		
+		return makler;
 	}
 	
 	/**
