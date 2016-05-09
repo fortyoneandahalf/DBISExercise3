@@ -8,9 +8,9 @@
             <column name="ID" />
             <generator class="assigned" />
         </id>
-        <discriminator type="string">
+        <!--<discriminator type="string">
             <column name="DISCR_COL" />
-        </discriminator>
+        </discriminator>-->
         <property name="vertragsnummer" type="int">
             <column name="VERTRAGSNUMMER" />
         </property>
@@ -35,9 +35,9 @@
 	        <property name="nebenkosten" type="int">
 	            <column name="NEBENKOSTEN" />
 	        </property>
-	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" fetch="join">
+	        <one-to-one name="wohnung" class="de.dis2013.data.Wohnung" fetch="join">
 	            <column name="WOHNUNG" />
-	        </many-to-one>
+	        </one-to-one>
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Kaufvertrag" table="kaufvertrag">
@@ -48,9 +48,9 @@
 	        <property name="ratenzins" type="int">
 	            <column name="RATENZINS" />
 	        </property>
-	        <many-to-one name="haus" class="de.dis2013.data.Haus" fetch="join">
+	        <one-to-one name="haus" class="de.dis2013.data.Haus" fetch="join">
 	            <column name="HAUS" />
-	        </many-to-one>
+	        </one-to-one>
 		</joined-subclass>
     </class>
 </hibernate-mapping>
