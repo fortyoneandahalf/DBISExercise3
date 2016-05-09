@@ -5,9 +5,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.criterion.Restrictions;
 
 import de.dis2013.data.Haus;
 import de.dis2013.data.Immobilie;
@@ -79,16 +81,27 @@ public class ImmoService {
 	 * @return Makler mit der ID oder null
 	 */
 	public Makler getMaklerByLogin(String login) {
-		Iterator<Makler> it = makler.iterator();
+//		Iterator<Makler> it = makler.iterator();
+//		
+//		while(it.hasNext()) {
+//			Makler m = it.next();
+//			
+//			if(m.getLogin().equals(login))
+//				return m;
+//		}
+//		
+//		return null;
 		
-		while(it.hasNext()) {
-			Makler m = it.next();
-			
-			if(m.getLogin().equals(login))
-				return m;
-		}
+		Session session = sessionFactory.openSession();
 		
-		return null;
+//		Makler makler = (Makler) session.get(Makler.class, id);
+		Criteria criteria = session.createCriteria(Makler.class);
+		Makler makler = (Makler) criteria.add(Restrictions.eq("login", login)).uniqueResult();
+		
+		session.close();
+		
+		return makler;
+		
 	}
 	
 	/**
@@ -267,7 +280,16 @@ public class ImmoService {
 	 * @param w Der Mietvertrag
 	 */
 	public void addMietvertrag(Mietvertrag m) {
-		mietvertraege.add(m);
+//		mietvertraege.add(m);
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		session.save(m);
+		session.getTransaction().commit();
+				
+		session.close();
+		
 	}
 	
 	/**
@@ -322,16 +344,24 @@ public class ImmoService {
 	 * @return Der Mietvertrag oder null, falls nicht gefunden
 	 */
 	public Mietvertrag getMietvertragById(int id) {
-		Iterator<Mietvertrag> it = mietvertraege.iterator();
+//		Iterator<Mietvertrag> it = mietvertraege.iterator();
+//		
+//		while(it.hasNext()) {
+//			Mietvertrag m = it.next();
+//			
+//			if(m.getId() == id)
+//				return m;
+//		}
+//		
+//		return null;
 		
-		while(it.hasNext()) {
-			Mietvertrag m = it.next();
-			
-			if(m.getId() == id)
-				return m;
-		}
+		Session session = sessionFactory.openSession();
 		
-		return null;
+		Mietvertrag mv = (Mietvertrag) session.get(Mietvertrag.class, id);
+		session.close();
+		
+		return mv;
+		
 	}
 	
 	/**
@@ -471,32 +501,42 @@ public class ImmoService {
 		}
 		session.close();
 		
-		Wohnung w = new Wohnung();
-		w.setOrt("Hamburg");
-		w.setPlz(22527);
-		w.setStrasse("Vogt-Kölln-Straße");
-		w.setHausnummer("3");
-		w.setFlaeche(120);
-		w.setStockwerk(4);
-		w.setMietpreis(790);
-		w.setEbk(true);
-		w.setBalkon(false);
-		w.setVerwalter(m);
-		this.addWohnung(w);
+		session = sessionFactory.openSession();
+		session.beginTransaction();
+		Wohnung w1 = new Wohnung();
+		w1.setOrt("Hamburg");
+		w1.setPlz(22527);
+		w1.setStrasse("Vogt-Kölln-Straße");
+		w1.setHausnummer("3");
+		w1.setFlaeche(120);
+		w1.setStockwerk(4);
+		w1.setMietpreis(790);
+		w1.setEbk(true);
+		w1.setBalkon(false);
+		w1.setVerwalter(m);
+		this.addWohnung(w1);
+		session.save(w1);
+		session.getTransaction().commit();
 		
-		w = new Wohnung();
-		w.setOrt("Berlin");
-		w.setPlz(22527);
-		w.setStrasse("Vogt-Kölln-Straße");
-		w.setHausnummer("3");
-		w.setFlaeche(120);
-		w.setStockwerk(4);
-		w.setMietpreis(790);
-		w.setEbk(true);
-		w.setBalkon(false);
-		w.setVerwalter(m);
-		this.addWohnung(w);
+		session.beginTransaction();
+		Wohnung w2 = new Wohnung();
+		w2.setOrt("Berlin");
+		w2.setPlz(22527);
+		w2.setStrasse("Vogt-Kölln-Straße");
+		w2.setHausnummer("3");
+		w2.setFlaeche(120);
+		w2.setStockwerk(4);
+		w2.setMietpreis(790);
+		w2.setEbk(true);
+		w2.setBalkon(false);
+		w2.setVerwalter(m);
+		this.addWohnung(w2);
+		session.save(w2);
+		session.getTransaction().commit();
+		session.close();
 		
+		session = sessionFactory.openSession();
+		session.beginTransaction();
 		Kaufvertrag kv = new Kaufvertrag();
 		kv.setHaus(h);
 		kv.setVertragspartner(p1);
@@ -508,7 +548,7 @@ public class ImmoService {
 		this.addKaufvertrag(kv);
 		
 		Mietvertrag mv = new Mietvertrag();
-		mv.setWohnung(w);
+		mv.setWohnung(w2);
 		mv.setVertragspartner(p2);
 		mv.setVertragsnummer(23112);
 		mv.setDatum(new Date(System.currentTimeMillis()-1000000000));
@@ -517,5 +557,10 @@ public class ImmoService {
 		mv.setNebenkosten(65);
 		mv.setDauer(36);
 		this.addMietvertrag(mv);
+		
+		session.save(kv);
+//		session.save(mv);
+		session.getTransaction().commit();
+		session.close();
 	}
 }
