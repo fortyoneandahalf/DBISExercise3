@@ -62,21 +62,10 @@ public class ImmoService {
 	 */
 	public Makler getMaklerById(int id) {
 		Session session = sessionFactory.openSession();
-//		session.beginTransaction();
 		
 		Makler makler = (Makler) session.get(Makler.class, id);
-		// session.save(makler);
 		session.close();
-		
-		//Iterator<Makler> it = makler.iterator();
-//		
-//		while(it.hasNext()) {
-//			Makler m = it.next();
-//			
-//			if(m.getId() == id)
-//				return m;
-//		}
-		
+
 		return makler;
 	}
 	
@@ -86,34 +75,28 @@ public class ImmoService {
 	 * @return Makler mit der ID oder null
 	 */
 	public Makler getMaklerByLogin(String login) {
-//		Iterator<Makler> it = makler.iterator();
-//		
-//		while(it.hasNext()) {
-//			Makler m = it.next();
-//			
-//			if(m.getLogin().equals(login))
-//				return m;
-//		}
-//		
-//		return null;
-		
 		Session session = sessionFactory.openSession();
 		
-//		Makler makler = (Makler) session.get(Makler.class, id);
-		Criteria criteria = session.createCriteria(Makler.class);
-		Makler makler = (Makler) criteria.add(Restrictions.eq("login", login)).uniqueResult();
-		
+		Makler makler = (Makler) session.createCriteria(Makler.class).add(Restrictions.eq("login", login)).uniqueResult();
 		session.close();
 		
 		return makler;
-		
 	}
 	
 	/**
 	 * Gibt alle Makler zurück
 	 */
 	public Set<Makler> getAllMakler() {
-		return makler;
+		Set<Makler> mkr = new HashSet<Makler>();
+		Session session = sessionFactory.openSession();
+		List<Makler> mkrs = session.createCriteria(Makler.class).list();
+		if(!mkrs.isEmpty())
+		{
+			mkr.addAll(mkrs);
+		}
+		session.close();
+		
+		return mkr;
 	}
 	
 	/**
@@ -139,7 +122,11 @@ public class ImmoService {
 	 * @param m Der Makler
 	 */
 	public void addMakler(Makler m) {
-		makler.add(m);
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		session.save(m);
+		session.getTransaction().commit();
+		session.close();
 	}
 	
 	/**
@@ -147,7 +134,11 @@ public class ImmoService {
 	 * @param m Der Makler
 	 */
 	public void deleteMakler(Makler m) {
-		makler.remove(m);
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		session.delete(m);
+		session.getTransaction().commit();
+		session.close();
 	}
 	
 	/**
