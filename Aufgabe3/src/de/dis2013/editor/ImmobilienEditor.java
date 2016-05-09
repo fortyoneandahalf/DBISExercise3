@@ -2,6 +2,8 @@ package de.dis2013.editor;
 
 import java.util.Set;
 
+import org.hibernate.Session;
+
 import de.dis2013.core.ImmoService;
 import de.dis2013.data.Haus;
 import de.dis2013.data.Makler;
@@ -151,6 +153,11 @@ public class ImmobilienEditor {
 				h.setKaufpreis(newKaufpreis);
 			
 			h.setGarten(newGarten);
+			Session session = service.getSessionFactory().openSession();
+			session.beginTransaction();
+			session.update(h);
+			session.getTransaction().commit();
+			session.close();
 		}
 	}
 	
@@ -247,6 +254,11 @@ public class ImmobilienEditor {
 			
 			w.setEbk(newEbk);
 			w.setBalkon(newBalkon);
+			Session session = service.getSessionFactory().openSession();
+			session.beginTransaction();
+			session.update(w);
+			session.getTransaction().commit();
+			session.close();
 		}
 	}
 	
