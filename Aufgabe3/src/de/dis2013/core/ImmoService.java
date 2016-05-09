@@ -334,17 +334,33 @@ public class ImmoService {
 	 * @return Alle Kaufverträge, die zu Häusern gehören, die vom Makler verwaltet werden
 	 */
 	public Set<Kaufvertrag> getAllKaufvertraegeForMakler(Makler m) {
-		Set<Kaufvertrag> ret = new HashSet<Kaufvertrag>();
-		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
+//		Set<Kaufvertrag> ret = new HashSet<Kaufvertrag>();
+//		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
+//		
+//		while(it.hasNext()) {
+//			Kaufvertrag k = it.next();
+//			
+//			if(k.getHaus().getVerwalter().equals(m))
+//				ret.add(k);
+//		}
+//		
+//		return ret;
 		
-		while(it.hasNext()) {
-			Kaufvertrag k = it.next();
-			
-			if(k.getHaus().getVerwalter().equals(m))
-				ret.add(k);
-		}
+		Set<Kaufvertrag> kvSet = new HashSet<Kaufvertrag>();
 		
-		return ret;
+		Session session = sessionFactory.openSession();
+		
+//		List<Wohnung> kvList = session.createCriteria(Wohnung.class).add(Restrictions.eq("verwalter", m)).list();
+		kvSet.addAll(session.createCriteria(Wohnung.class).add(Restrictions.eq("verwalter", m)).list());
+		
+//		if(!wohnungen.isEmpty()){
+//			ret.addAll(wohnungen);
+//		}
+		
+		session.close();
+		
+		return kvSet;
+		
 	}
 	
 	/**
@@ -417,16 +433,24 @@ public class ImmoService {
 	 * @return Der Kaufvertrag oder null, falls nicht gefunden
 	 */
 	public Kaufvertrag getKaufvertragById(int id) {
-		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
+//		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
+//		
+//		while(it.hasNext()) {
+//			Kaufvertrag k = it.next();
+//			
+//			if(k.getId() == id)
+//				return k;
+//		}
+//		
+//		return null;
 		
-		while(it.hasNext()) {
-			Kaufvertrag k = it.next();
-			
-			if(k.getId() == id)
-				return k;
-		}
+		Session session = sessionFactory.openSession();
 		
-		return null;
+		Kaufvertrag kv = (Kaufvertrag) session.get(Kaufvertrag.class, id);
+		session.close();
+		
+		return kv;
+		
 	}
 	
 	/**
@@ -434,7 +458,31 @@ public class ImmoService {
 	 * @param m Der Mietvertrag
 	 */
 	public void deleteMietvertrag(Mietvertrag m) {
-		wohnungen.remove(m);
+//		wohnungen.remove(m);
+		
+		Session session = sessionFactory.openSession();
+		
+		session.beginTransaction();
+		session.delete(m);
+		session.getTransaction().commit();
+		session.close();
+		
+	}
+	
+	/**
+	 * Löscht einen Kaufvertrag
+	 * @param k Der Kaufvertrag
+	 */
+	public void deleteKaufvertrag(Kaufvertrag k) {
+//		wohnungen.remove(m);
+		
+		Session session = sessionFactory.openSession();
+		
+		session.beginTransaction();
+		session.delete(k);
+		session.getTransaction().commit();
+		session.close();
+		
 	}
 	
 	/**
