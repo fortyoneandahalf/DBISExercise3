@@ -104,16 +104,12 @@ public class ImmoService {
 	 * @return Person mit der ID oder null
 	 */
 	public Person getPersonById(int id) {
-		Iterator<Person> it = personen.iterator();
+		Session session = sessionFactory.openSession();
 		
-		while(it.hasNext()) {
-			Person p = it.next();
-			
-			if(p.getId() == id)
-				return p;
-		}
-		
-		return null;
+		Person person = (Person) session.get(Person.class, id);
+		session.close();
+
+		return person;
 	}
 	
 	/**
@@ -145,14 +141,27 @@ public class ImmoService {
 	 * @param p Die Person
 	 */
 	public void addPerson(Person p) {
-		personen.add(p);
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		session.save(p);
+		session.getTransaction().commit();
+		session.close();
 	}
 	
 	/**
 	 * Gibt alle Personen zurück
 	 */
 	public Set<Person> getAllPersons() {
-		return personen;
+		Set<Person> psn = new HashSet<Person>();
+		Session session = sessionFactory.openSession();
+		List<Person> psns = session.createCriteria(Person.class).list();
+		if(!psns.isEmpty())
+		{
+			psn.addAll(psns);
+		}
+		session.close();
+		
+		return psn;
 	}
 	
 	/**
@@ -160,7 +169,11 @@ public class ImmoService {
 	 * @param p Die Person
 	 */
 	public void deletePerson(Person p) {
-		personen.remove(p);
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		session.delete(p);
+		session.getTransaction().commit();
+		session.close();
 	}
 	
 	/**
