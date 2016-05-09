@@ -51,6 +51,10 @@ public class ImmoService {
 		sessionFactory = new Configuration().configure().buildSessionFactory();
 	}
 	
+	public SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
+
 	/**
 	 * Finde einen Makler mit gegebener Id
 	 * @param id Die ID des Maklers
