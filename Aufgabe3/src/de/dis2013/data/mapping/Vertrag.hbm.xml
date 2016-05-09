@@ -35,9 +35,9 @@
 	        <property name="nebenkosten" type="int">
 	            <column name="NEBENKOSTEN" />
 	        </property>
-	        <one-to-one name="wohnung" class="de.dis2013.data.Wohnung" fetch="join">
-	            <column name="WOHNUNG" />
-	        </one-to-one>
+	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" fetch="join">
+	            <column name="WOHNUNG" unique="true" />
+	        </many-to-one>
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Kaufvertrag" table="kaufvertrag">
@@ -48,9 +48,9 @@
 	        <property name="ratenzins" type="int">
 	            <column name="RATENZINS" />
 	        </property>
-	        <one-to-one name="haus" class="de.dis2013.data.Haus" fetch="join">
-	            <column name="HAUS" />
-	        </one-to-one>
+	        <many-to-one name="haus" class="de.dis2013.data.Haus" fetch="join">
+	            <column name="HAUS" unique="true" />
+	        </many-to-one>
 		</joined-subclass>
     </class>
 </hibernate-mapping>
