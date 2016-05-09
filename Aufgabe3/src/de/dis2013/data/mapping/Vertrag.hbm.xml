@@ -40,7 +40,7 @@
 	        </many-to-one>
 		</joined-subclass>
 		
-		<joined-subclass name="de.dis2013.data.Kauftvertrag" table="kaufvertrag">
+		<joined-subclass name="de.dis2013.data.Kaufvertrag" table="kaufvertrag">
 			<key column="ID"/>
 			<property name="anzahlRaten" type="int">
 	            <column name="ANZAHLRATEN" />
