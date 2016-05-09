@@ -298,7 +298,15 @@ public class ImmoService {
 	 * @param w Der Kaufvertrag
 	 */
 	public void addKaufvertrag(Kaufvertrag k) {
-		kaufvertraege.add(k);
+//		kaufvertraege.add(k);
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		session.save(k);
+		session.getTransaction().commit();
+				
+		session.close();
 	}
 	
 	/**
@@ -502,8 +510,6 @@ public class ImmoService {
 //		}
 		session.close();
 		
-		session = sessionFactory.openSession();
-		session.beginTransaction();
 		Wohnung w1 = new Wohnung();
 		w1.setOrt("Hamburg");
 		w1.setPlz(22527);
@@ -516,10 +522,7 @@ public class ImmoService {
 		w1.setBalkon(false);
 		w1.setVerwalter(m);
 		this.addWohnung(w1);
-		session.save(w1);
-		session.getTransaction().commit();
 		
-		session.beginTransaction();
 		Wohnung w2 = new Wohnung();
 		w2.setOrt("Berlin");
 		w2.setPlz(22527);
@@ -532,12 +535,15 @@ public class ImmoService {
 		w2.setBalkon(false);
 		w2.setVerwalter(m);
 		this.addWohnung(w2);
-		session.save(w2);
-		session.getTransaction().commit();
-		session.close();
 		
-		session = sessionFactory.openSession();
-		session.beginTransaction();
+//		session = sessionFactory.openSession();
+//		session.beginTransaction();
+//		session.save(w1);
+//		session.save(w2);
+//		session.getTransaction().commit();
+//		session.close();
+		
+		
 		Kaufvertrag kv = new Kaufvertrag();
 		kv.setHaus(h);
 		kv.setVertragspartner(p1);
@@ -559,9 +565,11 @@ public class ImmoService {
 		mv.setDauer(36);
 		this.addMietvertrag(mv);
 		
-		session.save(kv);
+//		session = sessionFactory.openSession();
+//		session.beginTransaction();
+//		session.save(kv);
 //		session.save(mv);
-		session.getTransaction().commit();
-		session.close();
+//		session.getTransaction().commit();
+//		session.close();
 	}
 }
