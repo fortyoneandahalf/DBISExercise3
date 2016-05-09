@@ -6,10 +6,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
+
+import com.ibm.db2.jcc.b.h;
 
 import de.dis2013.data.Haus;
 import de.dis2013.data.Immobilie;
@@ -288,7 +291,15 @@ public class ImmoService {
 	 * @param w Der Mietvertrag
 	 */
 	public void addMietvertrag(Mietvertrag m) {
-		mietvertraege.add(m);
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		session.save(m);
+		session.getTransaction().commit();
+				
+		session.close();
+		
 	}
 	
 	/**
@@ -296,7 +307,14 @@ public class ImmoService {
 	 * @param w Der Kaufvertrag
 	 */
 	public void addKaufvertrag(Kaufvertrag k) {
-		kaufvertraege.add(k);
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		session.save(k);
+		session.getTransaction().commit();
+				
+		session.close();
 	}
 	
 	/**
@@ -305,17 +323,32 @@ public class ImmoService {
 	 * @return Alle Mietverträge, die zu Wohnungen gehören, die vom Makler verwaltet werden
 	 */
 	public Set<Mietvertrag> getAllMietvertraegeForMakler(Makler m) {
-		Set<Mietvertrag> ret = new HashSet<Mietvertrag>();
-		Iterator<Mietvertrag> it = mietvertraege.iterator();
 		
-		while(it.hasNext()) {
-			Mietvertrag v = it.next();
+		Set<Mietvertrag> mvSet = new HashSet<Mietvertrag>();
+		
+		Set<Wohnung> wohnungen = getAllWohnungenForMakler(m);
+		
+		Iterator<Wohnung> it = wohnungen.iterator();
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		while (it.hasNext()) {
 			
-			if(v.getWohnung().getVerwalter().equals(m))
-				ret.add(v);
+			Wohnung w = it.next();
+			
+			Mietvertrag mv = (Mietvertrag) session.createCriteria(Mietvertrag.class).add(Restrictions.eq("wohnung", w)).uniqueResult();
+			
+			if (mv != null) {
+				mvSet.add(mv);
+			}
+			
 		}
 		
-		return ret;
+		session.close();
+		
+		return mvSet;
+		
 	}
 	
 	/**
@@ -324,17 +357,32 @@ public class ImmoService {
 	 * @return Alle Kaufverträge, die zu Häusern gehören, die vom Makler verwaltet werden
 	 */
 	public Set<Kaufvertrag> getAllKaufvertraegeForMakler(Makler m) {
-		Set<Kaufvertrag> ret = new HashSet<Kaufvertrag>();
-		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
 		
-		while(it.hasNext()) {
-			Kaufvertrag k = it.next();
+		Set<Kaufvertrag> kvSet = new HashSet<Kaufvertrag>();
+		
+		Set<Haus> haeuser = getAllHaeuserForMakler(m);
+		
+		Iterator<Haus> it = haeuser.iterator();
+		
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		
+		while (it.hasNext()) {
 			
-			if(k.getHaus().getVerwalter().equals(m))
-				ret.add(k);
+			Haus h = it.next();
+			
+			Kaufvertrag kv = (Kaufvertrag) session.createCriteria(Kaufvertrag.class).add(Restrictions.eq("haus", h)).uniqueResult();
+			
+			if (kv != null) {
+				kvSet.add(kv);
+			}
+			
 		}
 		
-		return ret;
+		session.close();
+		
+		return kvSet;
+		
 	}
 	
 	/**
@@ -343,55 +391,53 @@ public class ImmoService {
 	 * @return Der Mietvertrag oder null, falls nicht gefunden
 	 */
 	public Mietvertrag getMietvertragById(int id) {
-		Iterator<Mietvertrag> it = mietvertraege.iterator();
 		
-		while(it.hasNext()) {
-			Mietvertrag m = it.next();
-			
-			if(m.getId() == id)
-				return m;
-		}
+		Session session = sessionFactory.openSession();
 		
-		return null;
+		Mietvertrag mv = (Mietvertrag) session.get(Mietvertrag.class, id);
+		session.close();
+		
+		return mv;
+		
 	}
 	
-	/**
-	 * Findet alle Mietverträge, die Wohnungen eines gegebenen Verwalters betreffen
-	 * @param id Der Verwalter
-	 * @return Set aus Mietverträgen
-	 */
-	public Set<Mietvertrag> getMietvertragByVerwalter(Makler m) {
-		Set<Mietvertrag> ret = new HashSet<Mietvertrag>();
-		Iterator<Mietvertrag> it = mietvertraege.iterator();
-		
-		while(it.hasNext()) {
-			Mietvertrag mv = it.next();
-			
-			if(mv.getWohnung().getVerwalter().getId() == m.getId())
-				ret.add(mv);
-		}
-		
-		return ret;
-	}
+//	/**
+//	 * Findet alle Mietverträge, die Wohnungen eines gegebenen Verwalters betreffen
+//	 * @param id Der Verwalter
+//	 * @return Set aus Mietverträgen
+//	 */
+//	public Set<Mietvertrag> getMietvertragByVerwalter(Makler m) {
+//		Set<Mietvertrag> ret = new HashSet<Mietvertrag>();
+//		Iterator<Mietvertrag> it = mietvertraege.iterator();
+//		
+//		while(it.hasNext()) {
+//			Mietvertrag mv = it.next();
+//			
+//			if(mv.getWohnung().getVerwalter().getId() == m.getId())
+//				ret.add(mv);
+//		}
+//		
+//		return ret;
+//	}
 	
-	/**
-	 * Findet alle Kaufverträge, die Häuser eines gegebenen Verwalters betreffen
-	 * @param id Der Verwalter
-	 * @return Set aus Kaufverträgen
-	 */
-	public Set<Kaufvertrag> getKaufvertragByVerwalter(Makler m) {
-		Set<Kaufvertrag> ret = new HashSet<Kaufvertrag>();
-		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
-		
-		while(it.hasNext()) {
-			Kaufvertrag k = it.next();
-			
-			if(k.getHaus().getVerwalter().getId() == m.getId())
-				ret.add(k);
-		}
-		
-		return ret;
-	}
+//	/**
+//	 * Findet alle Kaufverträge, die Häuser eines gegebenen Verwalters betreffen
+//	 * @param id Der Verwalter
+//	 * @return Set aus Kaufverträgen
+//	 */
+//	public Set<Kaufvertrag> getKaufvertragByVerwalter(Makler m) {
+//		Set<Kaufvertrag> ret = new HashSet<Kaufvertrag>();
+//		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
+//		
+//		while(it.hasNext()) {
+//			Kaufvertrag k = it.next();
+//			
+//			if(k.getHaus().getVerwalter().getId() == m.getId())
+//				ret.add(k);
+//		}
+//		
+//		return ret;
+//	}
 	
 	/**
 	 * Findet einen Kaufvertrag mit gegebener ID
@@ -399,25 +445,47 @@ public class ImmoService {
 	 * @return Der Kaufvertrag oder null, falls nicht gefunden
 	 */
 	public Kaufvertrag getKaufvertragById(int id) {
-		Iterator<Kaufvertrag> it = kaufvertraege.iterator();
 		
-		while(it.hasNext()) {
-			Kaufvertrag k = it.next();
-			
-			if(k.getId() == id)
-				return k;
-		}
+		Session session = sessionFactory.openSession();
 		
-		return null;
+		Kaufvertrag kv = (Kaufvertrag) session.get(Kaufvertrag.class, id);
+		session.close();
+		
+		return kv;
+		
 	}
 	
-	/**
-	 * Löscht einen Mietvertrag
-	 * @param m Der Mietvertrag
-	 */
-	public void deleteMietvertrag(Mietvertrag m) {
-		wohnungen.remove(m);
-	}
+//	/**
+//	 * Löscht einen Mietvertrag
+//	 * @param m Der Mietvertrag
+//	 */
+//	public void deleteMietvertrag(Mietvertrag m) {
+////		wohnungen.remove(m);
+//		
+//		Session session = sessionFactory.openSession();
+//		
+//		session.beginTransaction();
+//		session.delete(m);
+//		session.getTransaction().commit();
+//		session.close();
+//		
+//	}
+//	
+//	/**
+//	 * Löscht einen Kaufvertrag
+//	 * @param k Der Kaufvertrag
+//	 */
+//	public void deleteKaufvertrag(Kaufvertrag k) {
+////		wohnungen.remove(m);
+//		
+//		Session session = sessionFactory.openSession();
+//		
+//		session.beginTransaction();
+//		session.delete(k);
+//		session.getTransaction().commit();
+//		session.close();
+//		
+//	}
 	
 	/**
 	 * Fügt einige Testdaten hinzu
@@ -492,31 +560,39 @@ public class ImmoService {
 //		}
 		session.close();
 		
-		Wohnung w = new Wohnung();
-		w.setOrt("Hamburg");
-		w.setPlz(22527);
-		w.setStrasse("Vogt-Kölln-Straße");
-		w.setHausnummer("3");
-		w.setFlaeche(120);
-		w.setStockwerk(4);
-		w.setMietpreis(790);
-		w.setEbk(true);
-		w.setBalkon(false);
-		w.setVerwalter(m);
-		this.addWohnung(w);
+		Wohnung w1 = new Wohnung();
+		w1.setOrt("Hamburg");
+		w1.setPlz(22527);
+		w1.setStrasse("Vogt-Kölln-Straße");
+		w1.setHausnummer("3");
+		w1.setFlaeche(120);
+		w1.setStockwerk(4);
+		w1.setMietpreis(790);
+		w1.setEbk(true);
+		w1.setBalkon(false);
+		w1.setVerwalter(m);
+		this.addWohnung(w1);
 		
-		w = new Wohnung();
-		w.setOrt("Berlin");
-		w.setPlz(22527);
-		w.setStrasse("Vogt-Kölln-Straße");
-		w.setHausnummer("3");
-		w.setFlaeche(120);
-		w.setStockwerk(4);
-		w.setMietpreis(790);
-		w.setEbk(true);
-		w.setBalkon(false);
-		w.setVerwalter(m);
-		this.addWohnung(w);
+		Wohnung w2 = new Wohnung();
+		w2.setOrt("Berlin");
+		w2.setPlz(22527);
+		w2.setStrasse("Vogt-Kölln-Straße");
+		w2.setHausnummer("3");
+		w2.setFlaeche(120);
+		w2.setStockwerk(4);
+		w2.setMietpreis(790);
+		w2.setEbk(true);
+		w2.setBalkon(false);
+		w2.setVerwalter(m);
+		this.addWohnung(w2);
+		
+//		session = sessionFactory.openSession();
+//		session.beginTransaction();
+//		session.save(w1);
+//		session.save(w2);
+//		session.getTransaction().commit();
+//		session.close();
+		
 		
 		Kaufvertrag kv = new Kaufvertrag();
 		kv.setHaus(h);
@@ -529,7 +605,7 @@ public class ImmoService {
 		this.addKaufvertrag(kv);
 		
 		Mietvertrag mv = new Mietvertrag();
-		mv.setWohnung(w);
+		mv.setWohnung(w2);
 		mv.setVertragspartner(p2);
 		mv.setVertragsnummer(23112);
 		mv.setDatum(new Date(System.currentTimeMillis()-1000000000));
@@ -538,5 +614,12 @@ public class ImmoService {
 		mv.setNebenkosten(65);
 		mv.setDauer(36);
 		this.addMietvertrag(mv);
+		
+//		session = sessionFactory.openSession();
+//		session.beginTransaction();
+//		session.save(kv);
+//		session.save(mv);
+//		session.getTransaction().commit();
+//		session.close();
 	}
 }
