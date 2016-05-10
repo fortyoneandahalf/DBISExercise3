@@ -10,5 +10,9 @@
 		<property name="vorname" type="string" column="vorname" />
 		<property name="nachname" type="string" column="nachname" not-null="true" />
 		<property name="adresse" type="string" column="adresse" not-null="true" />
+		<set name="vertraege" inverse="true" cascade="delete">
+			<key column="vertragspartner" />
+			<one-to-many class="de.dis2013.data.Vertrag" />
+		</set>
 	</class>
 </hibernate-mapping>
