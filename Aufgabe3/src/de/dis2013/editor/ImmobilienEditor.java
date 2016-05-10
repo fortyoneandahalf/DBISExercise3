@@ -107,7 +107,7 @@ public class ImmobilienEditor {
 	 */
 	public void editHouse() {
 		//Alle Häuser suchen, die vom Makler verwaltet werden
-		Set<Haus> haeuser = service.getAllHaeuserForMakler(verwalter);
+		Set<Haus> haeuser = service.getAllHaeuserForMakler(verwalter, false);
 		
 		//Auswahlmenü für das zu bearbeitende Haus
 		HouseSelectionMenu hsm = new HouseSelectionMenu("Liste der verwalteten Häuser", haeuser);
@@ -167,7 +167,7 @@ public class ImmobilienEditor {
 	 */
 	public void deleteHouse() {
 		//Alle Häuser suchen, die vom Makler verwaltet werden
-		Set<Haus> haeuser = service.getAllHaeuserForMakler(verwalter);
+		Set<Haus> haeuser = service.getAllHaeuserForMakler(verwalter, false);
 		
 		//Auswahlmenü für das zu bearbeitende Haus
 		HouseSelectionMenu hsm = new HouseSelectionMenu("Liste der verwalteten Häuser", haeuser);
@@ -192,6 +192,7 @@ public class ImmobilienEditor {
 		w.setHausnummer(FormUtil.readString("Hausnummer"));
 		w.setFlaeche(FormUtil.readInt("Fläche"));
 		w.setStockwerk(FormUtil.readInt("Stockwerk"));
+		w.setZimmer(FormUtil.readInt("zimmer"));
 		w.setMietpreis(FormUtil.readInt("Mietpreis"));
 		w.setEbk(FormUtil.readBoolean("EBK"));
 		w.setBalkon(FormUtil.readBoolean("Balkon"));
@@ -206,7 +207,7 @@ public class ImmobilienEditor {
 	 */
 	public void editAppartment() {
 		//Alle Wohnungen suchen, die vom Makler verwaltet werden
-		Set<Wohnung> wohnungen = service.getAllWohnungenForMakler(verwalter);
+		Set<Wohnung> wohnungen = service.getAllWohnungenForMakler(verwalter, false);
 		
 		//Auswahlmenü für die zu bearbeitende Wohnung
 		AppartmentSelectionMenu asm = new AppartmentSelectionMenu("Liste der verwalteten Wohnungen", wohnungen);
@@ -226,6 +227,7 @@ public class ImmobilienEditor {
 			String newHausNummer = FormUtil.readString("Hausnummer ("+w.getHausnummer()+")");
 			int newFlaeche = FormUtil.readInt("Fläche ("+w.getFlaeche()+")");
 			int newStockwerk = FormUtil.readInt("Stockwerk ("+w.getStockwerk()+")");
+			int newZimmer = FormUtil.readInt("Zimmer ("+w.getZimmer()+")");
 			int newMietpreis = FormUtil.readInt("Mietpreis ("+w.getMietpreis()+")");
 			boolean newEbk = FormUtil.readBoolean("EBK ("+(w.isEbk() ? "j" : "n")+")");
 			boolean newBalkon = FormUtil.readBoolean("Balkon ("+(w.isBalkon() ? "j" : "n")+")");
@@ -249,6 +251,9 @@ public class ImmobilienEditor {
 			if(newStockwerk != 0)
 				w.setStockwerk(newStockwerk);
 			
+			if(newZimmer != 0)
+				w.setZimmer(newZimmer);
+			
 			if(newMietpreis != 0)
 				w.setMietpreis(newMietpreis);
 			
@@ -268,7 +273,7 @@ public class ImmobilienEditor {
 	 */
 	public void deleteAppartment() {
 		//Alle Wohnungen suchen, die vom Makler verwaltet werden
-		Set<Wohnung> wohnungen = service.getAllWohnungenForMakler(verwalter);
+		Set<Wohnung> wohnungen = service.getAllWohnungenForMakler(verwalter, false);
 		
 		//Auswahlmenü für die zu bearbeitende Wohnung
 		AppartmentSelectionMenu asm = new AppartmentSelectionMenu("Liste der verwalteten Wohnungen", wohnungen);

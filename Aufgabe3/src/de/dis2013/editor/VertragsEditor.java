@@ -3,6 +3,8 @@ package de.dis2013.editor;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.hibernate.exception.ConstraintViolationException;
+
 import de.dis2013.core.ImmoService;
 import de.dis2013.data.Haus;
 import de.dis2013.data.Kaufvertrag;
@@ -108,7 +110,7 @@ public class VertragsEditor {
 	 */
 	public void newMietvertrag() {
 		//Alle Wohnungen des Maklers finden
-		Set<Wohnung> wohnungen = service.getAllWohnungenForMakler(verwalter);
+		Set<Wohnung> wohnungen = service.getAllWohnungenForMakler(verwalter, true);
 		
 		//Auswahlmenü für die Wohnungen 
 		AppartmentSelectionMenu asm = new AppartmentSelectionMenu("Wohnung für Vertrag auswählen", wohnungen);
@@ -136,9 +138,13 @@ public class VertragsEditor {
 				m.setDauer(FormUtil.readInt("Dauer in Monaten"));
 				m.setNebenkosten(FormUtil.readInt("Nebenkosten"));
 				
-				service.addMietvertrag(m);
-				
-				System.out.println("Mietvertrag mit der ID "+m.getId()+" wurde erzeugt.");
+				try {
+					service.addMietvertrag(m);
+					System.out.println("Mietvertrag mit der ID "+m.getId()+" wurde erzeugt.");
+				}
+				catch(ConstraintViolationException cve) {
+					FormUtil.showMessage("Could not create new rental contract. This may be because the selected house has already been rented.");
+				}
 			}
 		}
 	}
@@ -148,7 +154,7 @@ public class VertragsEditor {
 	 */
 	public void newKaufvertrag() {
 		//Alle Häuser des Maklers finden
-		Set<Haus> haeuser = service.getAllHaeuserForMakler(verwalter);
+		Set<Haus> haeuser = service.getAllHaeuserForMakler(verwalter, true);
 		
 		//Auswahlmenü für das Haus
 		HouseSelectionMenu asm = new HouseSelectionMenu("Haus für Vertrag auswählen", haeuser);
@@ -175,7 +181,14 @@ public class VertragsEditor {
 				k.setAnzahlRaten(FormUtil.readInt("Anzahl Raten"));
 				k.setRatenzins(FormUtil.readInt("Ratenzins"));
 				
-				service.addKaufvertrag(k);
+				try {
+					service.addKaufvertrag(k);
+				}
+				catch(ConstraintViolationException cve) {
+					FormUtil.showMessage("Could not create new purchase contract. This may be because the selected house has already been bought.");
+				}
+				
+				
 				
 				System.out.println("Kaufvertrag mit der ID "+k.getId()+" wurde erzeugt.");
 			}

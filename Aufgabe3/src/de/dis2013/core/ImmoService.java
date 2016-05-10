@@ -11,6 +11,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.exception.ConstraintViolationException;
 
 import com.ibm.db2.jcc.b.h;
 
@@ -21,6 +22,7 @@ import de.dis2013.data.Makler;
 import de.dis2013.data.Mietvertrag;
 import de.dis2013.data.Person;
 import de.dis2013.data.Wohnung;
+import de.dis2013.util.FormUtil;
 
 /**
  * Klasse zur Verwaltung aller Datenbank-Entitäten.
@@ -211,16 +213,48 @@ public class ImmoService {
 	/**
 	 * Gibt alle Häuser eines Maklers zurück
 	 * @param m Der Makler
+	 * @param unboughtOnly Return nur die Haeuser, die mit keiner Kaufvertrag verbunden sind
 	 * @return Alle Häuser, die vom Makler verwaltet werden
 	 */
-	public Set<Haus> getAllHaeuserForMakler(Makler m) {
+	public Set<Haus> getAllHaeuserForMakler(Makler m, boolean unboughtOnly) {
+		
 		Set<Haus> ret = new HashSet<Haus>();
+		
 		Session session = sessionFactory.openSession();
+		
 		List<Haus> haeuser = session.createCriteria(Haus.class).add(Restrictions.eq("verwalter", m)).list();
-		if(!haeuser.isEmpty()){
-			ret.addAll(haeuser);
-		}
+		
 		session.close();
+		
+		if (!haeuser.isEmpty()) {
+		
+			if (unboughtOnly) {
+				
+				session = sessionFactory.openSession();
+				
+				Iterator<Haus> it = haeuser.iterator();
+				
+				while(it.hasNext()) {
+					
+					Haus h = it.next();
+					
+					Kaufvertrag kv = (Kaufvertrag) session.createCriteria(Kaufvertrag.class).add(Restrictions.eq("haus", h)).uniqueResult();
+					
+					if (kv == null) {
+						ret.add(h);
+					}
+					
+				}
+				
+				session.close();
+				
+			}
+			else {
+				ret.addAll(haeuser);
+			}
+			
+		}
+		
 		return ret;
 	}
 	
@@ -266,15 +300,44 @@ public class ImmoService {
 	 * @param m Der Makler
 	 * @return Alle Wohnungen, die vom Makler verwaltet werden
 	 */
-	public Set<Wohnung> getAllWohnungenForMakler(Makler m) {
+	public Set<Wohnung> getAllWohnungenForMakler(Makler m, boolean unrentedOnly) {
+		
 		Set<Wohnung> ret = new HashSet<Wohnung>();
+		
 		Session session = sessionFactory.openSession();
+		
 		List<Wohnung> wohnungen = session.createCriteria(Wohnung.class).add(Restrictions.eq("verwalter", m)).list();
 		
-		if(!wohnungen.isEmpty()){
-			ret.addAll(wohnungen);
-		}
 		session.close();
+		
+		if(!wohnungen.isEmpty()){
+			
+			if (unrentedOnly) {
+				
+				session = sessionFactory.openSession();
+				
+				Iterator<Wohnung> it = wohnungen.iterator();
+				
+				while(it.hasNext()) {
+					
+					Wohnung w = it.next();
+					
+					Mietvertrag mv = (Mietvertrag) session.createCriteria(Mietvertrag.class).add(Restrictions.eq("wohnung", w)).uniqueResult();
+					
+					if (mv == null) {
+						ret.add(w);
+					}
+					
+				}
+				
+				session.close();
+				
+			}
+			else {
+				ret.addAll(wohnungen);
+			}
+		}
+		
 		return ret;
 	}
 	
@@ -307,14 +370,14 @@ public class ImmoService {
 	 * Fügt einen Mietvertrag hinzu
 	 * @param w Der Mietvertrag
 	 */
-	public void addMietvertrag(Mietvertrag m) {
+	public void addMietvertrag(Mietvertrag m) throws ConstraintViolationException {
 		
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		
 		session.save(m);
 		session.getTransaction().commit();
-				
+		
 		session.close();
 		
 	}
@@ -323,7 +386,7 @@ public class ImmoService {
 	 * Fügt einen Kaufvertrag hinzu
 	 * @param w Der Kaufvertrag
 	 */
-	public void addKaufvertrag(Kaufvertrag k) {
+	public void addKaufvertrag(Kaufvertrag k) throws ConstraintViolationException {
 		
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
@@ -343,7 +406,7 @@ public class ImmoService {
 		
 		Set<Mietvertrag> mvSet = new HashSet<Mietvertrag>();
 		
-		Set<Wohnung> wohnungen = getAllWohnungenForMakler(m);
+		Set<Wohnung> wohnungen = getAllWohnungenForMakler(m, false);
 		
 		Iterator<Wohnung> it = wohnungen.iterator();
 		
@@ -377,7 +440,7 @@ public class ImmoService {
 		
 		Set<Kaufvertrag> kvSet = new HashSet<Kaufvertrag>();
 		
-		Set<Haus> haeuser = getAllHaeuserForMakler(m);
+		Set<Haus> haeuser = getAllHaeuserForMakler(m, false);
 		
 		Iterator<Haus> it = haeuser.iterator();
 		
@@ -509,9 +572,9 @@ public class ImmoService {
 	 */
 	public void addTestData() {
 		//Hibernate Session erzeugen
-		Session session = sessionFactory.openSession();
+//		Session session = sessionFactory.openSession();
 		
-		session.beginTransaction();
+//		session.beginTransaction();
 		
 		Makler m = new Makler();
 		m.setName("Max Mustermann");
@@ -521,10 +584,10 @@ public class ImmoService {
 		
 		//TODO: Dieser Makler wird im Speicher und der DB gehalten
 		this.addMakler(m);
-		session.save(m);
-		session.getTransaction().commit();
+//		session.save(m);
+//		session.getTransaction().commit();
 
-		session.beginTransaction();
+//		session.beginTransaction();
 		
 		Person p1 = new Person();
 		p1.setAdresse("Informatikum");
@@ -537,13 +600,13 @@ public class ImmoService {
 		p2.setNachname("Albers");
 		p2.setVorname("Hans");
 		
-		session.save(p1);
-		session.save(p2);
+//		session.save(p1);
+//		session.save(p2);
 		
 		//TODO: Diese Personen werden im Speicher und der DB gehalten
 		this.addPerson(p1);
 		this.addPerson(p2);
-		session.getTransaction().commit();
+//		session.getTransaction().commit();
 		
 		//Hibernate Session erzeugen
 		//session.beginTransaction();
@@ -565,7 +628,7 @@ public class ImmoService {
 		//session.getTransaction().commit();
 		
 		//Hibernate Session erzeugen
-		session = sessionFactory.openSession();
+		Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		Makler m2 = (Makler)session.get(Makler.class, m.getId());
 //		Set<Immobilie> immos = m2.getImmobilien();
