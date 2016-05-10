@@ -116,6 +116,22 @@ public class ImmoService {
 	}
 	
 	/**
+	 * Gibt alle Personen zurück
+	 */
+	public Set<Person> getAllPersons() {
+		Set<Person> psn = new HashSet<Person>();
+		Session session = sessionFactory.openSession();
+		List<Person> psns = session.createCriteria(Person.class).list();
+		if(!psns.isEmpty())
+		{
+			psn.addAll(psns);
+		}
+		session.close();
+		
+		return psn;
+	}
+	
+	/**
 	 * Fügt einen Makler hinzu
 	 * @param m Der Makler
 	 */
@@ -123,6 +139,14 @@ public class ImmoService {
 		Session session = sessionFactory.openSession();
 		session.beginTransaction();
 		session.save(m);
+		session.getTransaction().commit();
+		session.close();
+	}
+	
+	public void editMakler(Makler m) {
+		Session session = sessionFactory.openSession();
+		session.beginTransaction();
+		session.update(m);
 		session.getTransaction().commit();
 		session.close();
 	}
@@ -151,20 +175,13 @@ public class ImmoService {
 		session.close();
 	}
 	
-	/**
-	 * Gibt alle Personen zurück
-	 */
-	public Set<Person> getAllPersons() {
-		Set<Person> psn = new HashSet<Person>();
+	//edit person data
+	public void editPerson(Person p) {
 		Session session = sessionFactory.openSession();
-		List<Person> psns = session.createCriteria(Person.class).list();
-		if(!psns.isEmpty())
-		{
-			psn.addAll(psns);
-		}
+		session.beginTransaction();
+		session.update(p);
+		session.getTransaction().commit();
 		session.close();
-		
-		return psn;
 	}
 	
 	/**
