@@ -12,7 +12,7 @@
 		<property name="login" type="string" column="login" not-null="true" unique="true" />
 		<property name="passwort" type="string" column="passwort" not-null="true" />
 		
-		<set name="immobilien" inverse="true">
+		<set name="immobilien" inverse="true" cascade="delete" >
 			<key column="verwalter" />
 			<one-to-many class="de.dis2013.data.Immobilie" />
 		</set>
