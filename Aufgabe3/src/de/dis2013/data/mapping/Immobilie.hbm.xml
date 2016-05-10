@@ -7,36 +7,36 @@
 		<id name="id" column="id">
 			<generator class="increment" />
 		</id>
-		<property name="ort" type="string" column="ort" />
-		<property name="plz" type="integer" column="plz" />
-		<property name="strasse" type="string" column="strasse" />
-		<property name="hausnummer" type="string" column="hausnummer" />
-		<property name="flaeche" type="integer" column="flaeche" />
+		<property name="ort" type="string" column="ort" not-null="true" />
+		<property name="plz" type="integer" column="plz" not-null="true" />
+		<property name="strasse" type="string" column="strasse" not-null="true" />
+		<property name="hausnummer" type="string" column="hausnummer" not-null="true" />
+		<property name="flaeche" type="integer" column="flaeche" not-null="true" />
 		<many-to-one name="verwalter" class="de.dis2013.data.Makler" column="verwalter" not-null="true" />
 		
 		<joined-subclass name="de.dis2013.data.Haus" table="haeuser">
 			<key column="id"/>
-			<property name="stockwerke" type="integer" column="stockwerke" />
-			<property name="kaufpreis" type="integer" column="kaufpreis" />
-			<property name="garten" type="boolean" column="garten" />
+			<property name="stockwerke" type="integer" column="stockwerke" not-null="true" />
+			<property name="kaufpreis" type="integer" column="kaufpreis" not-null="true" />
+			<property name="garten" type="boolean" column="garten" not-null="true" />
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Wohnung" table="wohnung">
 			<key column="id"/>
 			<property name="stockwerk" type="int">
-	            <column name="STOCKWERK" />
+	            <column name="STOCKWERK" not-null="true" />
 	        </property>
 	        <property name="mietpreis" type="int">
-	            <column name="MIETPREIS" />
+	            <column name="MIETPREIS" not-null="true" />
 	        </property>
 	        <property name="zimmer" type="int">
-	            <column name="ZIMMER" />
+	            <column name="ZIMMER" not-null="true" />
 	        </property>
 	        <property name="balkon" type="boolean">
-	            <column name="BALKON" />
+	            <column name="BALKON" not-null="true" />
 	        </property>
 	        <property name="ebk" type="boolean">
-	            <column name="EBK" />
+	            <column name="EBK" not-null="true" />
 	        </property>
 	    </joined-subclass>
 	</class>

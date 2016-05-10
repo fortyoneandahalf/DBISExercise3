@@ -12,41 +12,41 @@
             <column name="DISCR_COL" />
         </discriminator>-->
         <property name="vertragsnummer" type="int">
-            <column name="VERTRAGSNUMMER" />
+            <column name="VERTRAGSNUMMER" not-null="true" />
         </property>
         <property name="datum" type="java.util.Date">
-            <column name="DATUM" />
+            <column name="DATUM" not-null="true" />
         </property>
         <property name="ort" type="java.lang.String">
             <column name="ORT" />
         </property>
         <many-to-one name="vertragspartner" class="de.dis2013.data.Person" fetch="join">
-            <column name="VERTRAGSPARTNER" />
+            <column name="VERTRAGSPARTNER" not-null="true" />
         </many-to-one>
         
         <joined-subclass name="de.dis2013.data.Mietvertrag" table="mietvertrag">
 			<key column="ID"/>
 			<property name="mietbeginn" type="java.util.Date">
-	            <column name="MIETBEGINN" />
+	            <column name="MIETBEGINN" not-null="true" />
 	        </property>
 	        <property name="dauer" type="int">
-	            <column name="DAUER" />
+	            <column name="DAUER" not-null="true" />
 	        </property>
 	        <property name="nebenkosten" type="int">
 	            <column name="NEBENKOSTEN" />
 	        </property>
-	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" column="WOHNUNG" unique="true" fetch="join" />
+	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" column="WOHNUNG" unique="true" not-null="true" fetch="join" />
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Kaufvertrag" table="kaufvertrag">
 			<key column="ID"/>
 			<property name="anzahlRaten" type="int">
-	            <column name="ANZAHLRATEN" />
+	            <column name="ANZAHLRATEN" not-null="true" />
 	        </property>
 	        <property name="ratenzins" type="int">
-	            <column name="RATENZINS" />
+	            <column name="RATENZINS" not-null="true" />
 	        </property>
-	        <many-to-one name="haus" class="de.dis2013.data.Haus" column="HAUS" unique="true" fetch="join" />
+	        <many-to-one name="haus" class="de.dis2013.data.Haus" column="HAUS" unique="true" not-null="true" fetch="join" />
 		</joined-subclass>
     </class>
 </hibernate-mapping>
