@@ -12,6 +12,7 @@ public class Wohnung extends Immobilie {
 	private int zimmer;
 	private boolean balkon;
 	private boolean ebk;
+	private Mietvertrag mietvertrag;
 	
 	public Wohnung() {
 		super();
@@ -48,6 +49,14 @@ public class Wohnung extends Immobilie {
 		this.ebk = ebk;
 	}
 	
+	public Mietvertrag getMietvertrag() {
+		return mietvertrag;
+	}
+
+	public void setMietvertrag(Mietvertrag mietvertrag) {
+		this.mietvertrag = mietvertrag;
+	}
+
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

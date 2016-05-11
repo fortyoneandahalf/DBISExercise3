@@ -9,6 +9,7 @@ public class Haus extends Immobilie {
 	private int stockwerke;
 	private int kaufpreis;
 	private boolean garten;
+	private Kaufvertrag kaufvertrag;
 	
 	public Haus() {
 		super();
@@ -33,6 +34,14 @@ public class Haus extends Immobilie {
 		this.garten = garten;
 	}
 	
+	public Kaufvertrag getKaufvertrag() {
+		return kaufvertrag;
+	}
+
+	public void setKaufvertrag(Kaufvertrag kaufvertrag) {
+		this.kaufvertrag = kaufvertrag;
+	}
+
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();

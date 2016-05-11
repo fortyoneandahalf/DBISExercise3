@@ -35,7 +35,10 @@
 	        <property name="nebenkosten" type="int">
 	            <column name="NEBENKOSTEN" />
 	        </property>
-	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" column="WOHNUNG" unique="true" not-null="true" fetch="join" />
+	        <many-to-one name="wohnung" class="de.dis2013.data.Wohnung" fetch="join">
+	        	<column name="WOHNUNG" unique="true" not-null="true" />
+        	</many-to-one>
+        	<!-- <one-to-one name="wohnung" class="de.dis2013.data.Wohnung" constrained="true" cascade="save-update" fetch="join" /> -->
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Kaufvertrag" table="kaufvertrag">
@@ -46,7 +49,10 @@
 	        <property name="ratenzins" type="int">
 	            <column name="RATENZINS" not-null="true" />
 	        </property>
-	        <many-to-one name="haus" class="de.dis2013.data.Haus" column="HAUS" unique="true" not-null="true" fetch="join" />
+	         <many-to-one name="haus" class="de.dis2013.data.Haus" fetch="join">
+	        	<column name="HAUS" unique="true" not-null="true" />
+        	</many-to-one>
+        	<!-- <one-to-one name="haus" class="de.dis2013.data.Haus" constrained="true" cascade="save-update" fetch="join" /> -->
 		</joined-subclass>
     </class>
 </hibernate-mapping>

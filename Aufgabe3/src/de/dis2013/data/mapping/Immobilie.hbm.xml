@@ -19,6 +19,8 @@
 			<property name="stockwerke" type="integer" column="stockwerke" not-null="true" />
 			<property name="kaufpreis" type="integer" column="kaufpreis" not-null="true" />
 			<property name="garten" type="boolean" column="garten" not-null="true" />
+			<!-- <many-to-one name="kaufvertrag" class="de.dis2013.data.Kaufvertrag" column="kaufvertrag" cascade="delete" /> -->
+			<one-to-one name="kaufvertrag" class="de.dis2013.data.Kaufvertrag" property-ref="haus" cascade="delete" />
 		</joined-subclass>
 		
 		<joined-subclass name="de.dis2013.data.Wohnung" table="wohnung">
@@ -38,6 +40,8 @@
 	        <property name="ebk" type="boolean">
 	            <column name="EBK" not-null="true" />
 	        </property>
+	        <!-- <many-to-one name="mietvertrag" class="de.dis2013.data.Mietvertrag" column="mietvertrag" cascade="delete" /> -->
+	        <one-to-one name="mietvertrag" class="de.dis2013.data.Mietvertrag" property-ref="wohnung" cascade="delete" />
 	    </joined-subclass>
 	</class>
 </hibernate-mapping>
